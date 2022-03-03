@@ -5,54 +5,48 @@
 #include <algorithm>
 #include <immintrin.h>
 
-#define S 200000
-#define n 1
-#define N n*n
+#define S 200
+#define n 100000
+#define N 4096*n
 
 using namespace std;
 
-char array1[N];
+unsigned char array1[N];
 
 
 int main() {
+    unsigned char junk;
+    volatile uint8_t* addr;
 
     init();
+    
+    for (int i = 0; i < N; i++) array1[i] = 1;
 
-    for (int i = 0; i < N; i++) {
-        array1[i] = i % 128 + (i >> 8) % 128;
-    }
 
-    char some_res = 0;
+    for (int s = 0; s < S; s++) {
+        for (int i = 0; i < n; i++) _mm_clflush(&array1[i*4096]);
+        
+        addr = &array1[0];
 
-    vector<int> v;
-    for (int i = 0; i < N; i++) {
-        v.push_back(i);
-    }
-
-    random_shuffle(v.begin(), v.end());    
-
-    for (int i = 0; i < S; i++) {
-        for (int i = 0; i < N; i++) {
-            int idx = v[i];
-            int x = 0;
-            _mm_clflush(&array1[idx]);
-
-            Measurement start = measure();
-            x = array1[idx];
-            Measurement stop = measure();
-            idx = N - idx;
-            some_res ^= x;
-            Sample sample = convert(start, stop);
-            fprintf(stderr, "%f\n", sample.energy);
-
-            idx = N - idx;
-
-            start = measure();
-            x = array1[idx];
-            stop = measure();
-            some_res += x;
-            sample = convert(start, stop);
-            fprintf(stderr, "%f\n", sample.energy);
+        Measurement start = measure();
+        for (volatile int i = 0; i < n; i++) {
+            junk = addr[i*4096];
         }
+        Measurement stop = measure();
+        Sample sample = convert(start, stop);
+
+        printf("%f\n", sample.energy);
+
+        int x = addr[0];
+
+        start = measure();
+        for (volatile int i = 0; i < n; i++) {
+            junk = *addr;
+        }
+        stop = measure();
+        sample = convert(start, stop);
+
+        printf("%f\n", sample.energy);
     }
 }
+
