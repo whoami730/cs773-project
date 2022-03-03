@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <immintrin.h>
 
-#define S 200
+#define S 20000
 #define n 100000
 #define N 4096*n
 
