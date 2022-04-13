@@ -12,7 +12,7 @@
 #define MAX 10000
 #define S 2000
 #define n 100000
-// #define N 4096*n
+#define N1 4096*n
 
 timer_t gTimerid;
 uint64_t writer = 0;
@@ -77,7 +77,7 @@ void init_victim() {
 
 void victim() {
   uint64_t factor = 0xdeadc0de;
-  unsigned char array1[N];
+  unsigned char array1[N1];
   volatile uint8_t* addr;
   unsigned char junk;
   // this is a just a toy example!

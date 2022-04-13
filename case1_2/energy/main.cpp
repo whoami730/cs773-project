@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <immintrin.h>
 
-#define S 2000
+#define S 20000
 #define n 100000
 #define N 4096*n
 
@@ -31,9 +31,9 @@ int main() {
         Measurement start = measure();
         for (volatile int i = 0; i < n; i++) {
             _mm_clflush(&array1[i*4096]);
-            // _mm_mfence();
+            _mm_mfence();
             junk = array1[i*4096];
-            // _mm_mfence();
+            _mm_mfence();
         }
         Measurement stop = measure();
         Sample sample = convert(start, stop);
@@ -57,9 +57,9 @@ int main() {
         start = measure();
         for (volatile int i = 0; i < n; i++) {
             _mm_clflush(&array1[0]);
-            // _mm_mfence();
+            _mm_mfence();
             junk = array1[0];
-            // _mm_mfence();
+            _mm_mfence();
         }
         stop = measure();
         sample = convert(start, stop);
