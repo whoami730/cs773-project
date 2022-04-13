@@ -14,6 +14,10 @@
 #define n 100000
 #define N1 4096*n
 
+unsigned char array1[N1];
+
+for (int i = 0; i < N1; i++) array1[i] = 1;
+
 timer_t gTimerid;
 uint64_t writer = 0;
 
@@ -77,7 +81,7 @@ void init_victim() {
 
 void victim() {
   uint64_t factor = 0xdeadc0de;
-  unsigned char array1[N1];
+  
   volatile uint8_t* addr;
   unsigned char junk;
   // this is a just a toy example!
