@@ -16,7 +16,6 @@
 
 unsigned char array1[N1];
 
-for (int i = 0; i < N1; i++) array1[i] = 1;
 
 timer_t gTimerid;
 uint64_t writer = 0;
@@ -55,21 +54,7 @@ void stop_timer(void) {
 
 char key[] = {0,1,1,0,1};
 
-
-
-void square(uint64_t *buffer, uint64_t N) {
-  for (int i = 0; i < N; ++i) {
-    buffer[i] = buffer[i] * buffer[i]; 
-  }
-}
-
-void square_and_multiply(volatile uint64_t *buffer, volatile uint64_t factor, uint64_t N) {
-  for (volatile int i = 0; i < N; ++i) {
-    buffer[i] = buffer[i] * buffer[i] * factor;
-  }
-}
-
-void balloon(double _n){
+void balloon(double _n, unsigned char junk){
   uint64_t until = get_timestamp() + seconds_2_timeticks(_n); 
   // while (get_timestamp() < until) {                           
   //   _x;                                                       
@@ -84,16 +69,16 @@ void balloon(double _n){
   }
 }
 
-void idle(double _n){
+void idle(double _n,unsigned char junk){
   uint64_t until = get_timestamp() + seconds_2_timeticks(_n);
-
+  
   for (volatile int i = 0; get_timestamp() < until; i++) {
-            _mm_clflush(&array1[0]);
-            // _mm_mfence();
-            junk = array1[0];
-            // _mm_mfence();
-        }
-    }
+    // _mm_clflush(&array1[0]);
+    // // _mm_mfence();
+    // junk = array1[0];
+    // // _mm_mfence();
+    ;
+  }
 }
 
 #define N 200000
@@ -101,6 +86,7 @@ void idle(double _n){
 uint64_t XY[N];
 
 void init_victim() {
+ for (int i = 0; i < N1; i++) array1[i] = 1;
  for (int i = 0; i < N; ++i) {
     XY[i] = 1;
   }
@@ -115,13 +101,13 @@ void victim() {
   for (int j = 0; j < sizeof(key); ++j) {
     if (key[j]) {
       // DO_FOR_N_SECONDS(0.1, square_and_multiply(XY, factor, N));
-      balloon(0.1);
+      balloon(0.1,junk);
     } else {
       // try switching these lines to go from the covert channel to an RSA like sampling attack.
       //DO_FOR_N_SECONDS(0.1, square(XY, N));
-      idle(0.1);
+      idle(0.1,junk);
   }
-
+}
 }
 
 int main() {
