@@ -7,11 +7,12 @@
 #include <cstring>
 #include <time.h>
 #include <signal.h>
+#include <immintrin.h>
 
 #define MAX 10000
 #define S 2000
 #define n 100000
-#define N 4096*n
+// #define N 4096*n
 
 timer_t gTimerid;
 uint64_t writer = 0;
