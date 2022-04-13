@@ -80,8 +80,8 @@ void victim() {
   volatile uint8_t* addr;
   unsigned char junk;
   // this is a just a toy example!
-  for (int i = 0; i < sizeof(key); ++i) {
-    if (key[i]) {
+  for (int j = 0; j < sizeof(key); ++j) {
+    if (key[j]) {
       // DO_FOR_N_SECONDS(0.1, square_and_multiply(XY, factor, N));
       addr = &array1[0];
 
