@@ -65,6 +65,33 @@ void square_and_multiply(volatile uint64_t *buffer, volatile uint64_t factor, ui
   }
 }
 
+void balloon(double _n){
+  uint64_t until = get_timestamp() + seconds_2_timeticks(_n); 
+  // while (get_timestamp() < until) {                           
+  //   _x;                                                       
+  // }
+
+  for (volatile int i = 0; get_timestamp() < until; i++) {
+      if(i >= n) i = 0;
+      _mm_clflush(&array1[i*4096]);
+      // _mm_mfence();
+      junk = array1[i*4096];
+      // _mm_mfence();
+  }
+}
+
+void idle(double _n){
+  uint64_t until = get_timestamp() + seconds_2_timeticks(_n);
+
+  for (volatile int i = 0; get_timestamp() < until; i++) {
+            _mm_clflush(&array1[0]);
+            // _mm_mfence();
+            junk = array1[0];
+            // _mm_mfence();
+        }
+    }
+}
+
 #define N 200000
 
 uint64_t XY[N];
@@ -84,25 +111,11 @@ void victim() {
   for (int j = 0; j < sizeof(key); ++j) {
     if (key[j]) {
       // DO_FOR_N_SECONDS(0.1, square_and_multiply(XY, factor, N));
-      addr = &array1[0];
-
-      for (volatile int i = 0; i < n; i++) {
-          _mm_clflush(&array1[i*4096]);
-          // _mm_mfence();
-          junk = array1[i*4096];
-          // _mm_mfence();
-      }
+      balloon(0.1);
     } else {
       // try switching these lines to go from the covert channel to an RSA like sampling attack.
       //DO_FOR_N_SECONDS(0.1, square(XY, N));
-      // DO_FOR_N_SECONDS(0.1, usleep(10*1000));
-      for (volatile int i = 0; i < n; i++) {
-            _mm_clflush(&array1[0]);
-            // _mm_mfence();
-            junk = array1[0];
-            // _mm_mfence();
-        }
-    }
+      idle(0.1);
   }
 
 }
