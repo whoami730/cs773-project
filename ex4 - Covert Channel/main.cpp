@@ -45,7 +45,8 @@ void stop_timer(void) {
   timer_settime(gTimerid, 0, &value, NULL);
 }
 
-char key[] = {0,1,1,0,1};
+// char key[] = {0,1,1,0,1};
+char key[] = {1,0,0,0,1};
 
 
 
